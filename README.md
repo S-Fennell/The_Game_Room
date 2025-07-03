@@ -1,3 +1,7 @@
+The Game Room is an app with multiple games to play
+
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
