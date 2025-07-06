@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Squares from "./Components/Squares";
 
 export default function TicTacToe(){
@@ -8,7 +8,24 @@ export default function TicTacToe(){
         "","","",//second row
         "","",""]//third row
        );
-    const [player, setPlayer] =useState("X")
+    const [player, setPlayer] = useState("O")
+    const [winnerIs, setWinner] = useState({winner: "", state: ""})
+
+    useEffect(()=>{
+        winner();
+        if(player == "X"){
+            setPlayer("O");
+        }else if(player =="O"){
+            setPlayer("X");
+        };
+    }, [gameBoard]);
+
+      useEffect(()=>{
+         tieCondition();
+        if(winnerIs.state != ""){
+            alert(`${winnerIs.winner} Is The Winner`)
+        }
+    }, [gameBoard])
 
        const pickSquare =(square)=>{
         setGame(gameBoard.map((choice, index)=>{
@@ -18,11 +35,7 @@ export default function TicTacToe(){
             return choice;
         })
       );
-      if(player == "X"){
-        setPlayer("O");
-      }else if(player =="O"){
-        setPlayer("X");
-      };
+
     };
 
     const winConditions = [
@@ -31,7 +44,46 @@ export default function TicTacToe(){
         [0,4,8],[2,4,6]
     ];
 
+    const winner =()=>{
+        winConditions.forEach((condition)=>{
+            const playerOne = gameBoard[condition[0]];
+            if(playerOne == "") return;
+            let winner = true;
+            condition.forEach((index)=>{
+                if(gameBoard[index]!= playerOne){
+                    winner = false
+                }
+            })
+            if(winner){
+                setWinner({winner: player, state: "Winner!"})
+            }
+        })
+    };
+
+    const tieCondition = () =>{
+        let squarePicked = true;
+        gameBoard.forEach((square)=>{
+            if(square == ""){
+                squarePicked = false
+            }
+        });
+        if(squarePicked){
+            setWinner({winner: "None", state: "It's a Tie"})
+        }
+    };
+
+    const restart =()=>{
+        setGame(
+       ["","","",
+        "","","",
+        "","",""]
+       );
+       setPlayer("O")
+
+    }
+
     return(
+        <>
         <div className="game">
             <div className="board">
                 <div className="row">
@@ -49,8 +101,12 @@ export default function TicTacToe(){
                     <Squares choice={gameBoard[7]} pickSquare={()=>{pickSquare(7)}}/>
                     <Squares choice={gameBoard[8]} pickSquare={()=>{pickSquare(8)}}/>
                 </div>
+                <button className="restart" onclick={restart}>RESTART</button>
             </div>
+         
         </div>
+        </>
+        
     )
 }
 
